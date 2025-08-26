@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Matter from "matter-js";
 import { HeaderBrand } from "@/components/HeaderBrand";
 
@@ -268,41 +267,49 @@ export default function Page() {
               <div ref={containerRef} className="relative h-[180px] sm:h-[220px] md:h-[260px] lg:h-[300px] select-none will-change-transform" onPointerMove={onPointerMove} onPointerLeave={onPointerLeave}>
                 {measureNode}
 
-                <AnimatePresence>
-                  {phase === "physics" && (
-                    <div className="absolute inset-0">
-                      {LETTERS.map((ch, i) => (
-                        <motion.div
-                          key={`phys_${i}`}
-                          className="absolute"
-                          style={{
-                            left: 0, top: 0, translateX: bodiesState[i]?.x ?? 0, translateY: bodiesState[i]?.y ?? -200,
-                            rotate: `${(bodiesState[i]?.angle ?? 0) * (180 / Math.PI)}deg`, transformOrigin: "center", willChange: "transform"
-                          }}
-                        >
-                          <SvgLetter ch={ch} fontSize={fontSize} textureOffset={textureOffsets[i]} dark={dark} />
-                        </motion.div>
-                      ))}
-                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 h-4 w-2/3 rounded-full blur-md"
-                           style={{ background: "radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.08) 60%, rgba(0,0,0,0) 100%)" }}/>
-                    </div>
-                  )}
-                </AnimatePresence>
+                {phase === "physics" && (
+                  <div className="absolute inset-0">
+                    {LETTERS.map((ch, i) => (
+                      <div
+                        key={`phys_${i}`}
+                        className="absolute transition-transform duration-100"
+                        style={{
+                          left: 0, 
+                          top: 0, 
+                          transform: `translate(${bodiesState[i]?.x ?? 0}px, ${bodiesState[i]?.y ?? -200}px) rotate(${(bodiesState[i]?.angle ?? 0) * (180 / Math.PI)}deg)`,
+                          transformOrigin: "center",
+                        }}
+                      >
+                        <SvgLetter ch={ch} fontSize={fontSize} textureOffset={textureOffsets[i]} dark={dark} />
+                      </div>
+                    ))}
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 h-4 w-2/3 rounded-full blur-md"
+                         style={{ background: "radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.08) 60%, rgba(0,0,0,0) 100%)" }}/>
+                  </div>
+                )}
 
                 {phase === "assemble" && targets && (
                   <div className="absolute inset-0">
-                    {LETTERS.map((ch, i) => (
-                      <motion.div
-                        key={`asm_${i}`}
-                        className="absolute will-change-transform"
-                        initial={{ x: bodiesState[i]?.x ?? 0, y: bodiesState[i]?.y ?? 0, rotate: (bodiesState[i]?.angle ?? 0) * (180 / Math.PI), scale: 1.05 }}
-                        animate={{ x: targets[i].x + (prefersReduced ? 0 : parallax.x * (0.2 + i * 0.03)), y: targets[i].y + (prefersReduced ? 0 : parallax.y * (0.2 + i * 0.03)), rotate: 0, scale: 1.0 }}
-                        transition={{ type: "spring", stiffness: 230, damping: 18, delay: 0.05 + i * 0.06 }}
-                        style={{ transformOrigin: "center" }}
-                      >
-                        <SvgLetter ch={ch} fontSize={fontSize} textureOffset={textureOffsets[i]} dark={dark} />
-                      </motion.div>
-                    ))}
+                    {LETTERS.map((ch, i) => {
+                      const targetX = targets[i].x + (prefersReduced ? 0 : parallax.x * (0.2 + i * 0.03));
+                      const targetY = targets[i].y + (prefersReduced ? 0 : parallax.y * (0.2 + i * 0.03));
+                      
+                      return (
+                        <div
+                          key={`asm_${i}`}
+                          className="absolute transition-all duration-1000 ease-out"
+                          style={{
+                            left: 0,
+                            top: 0,
+                            transform: `translate(${targetX}px, ${targetY}px) rotate(0deg) scale(1)`,
+                            transformOrigin: "center",
+                            transitionDelay: `${50 + i * 60}ms`
+                          }}
+                        >
+                          <SvgLetter ch={ch} fontSize={fontSize} textureOffset={textureOffsets[i]} dark={dark} />
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
