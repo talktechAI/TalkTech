@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // your normal Next.js config goes here
+  // put any Next.js options you want here
   // example: reactStrictMode: true,
 };
 
 if (process.env.NODE_ENV !== 'production') {
-  // only wrap the dev server so getRequestContext() works locally
+  // Use Cloudflare's dev shim ONLY for `npm run dev`
   const { setupDevPlatform } = require('@cloudflare/next-on-pages/next-dev');
   module.exports = setupDevPlatform(nextConfig);
 } else {
-  // production build must export a plain object
+  // In production, Next needs a plain object
   module.exports = nextConfig;
 }
