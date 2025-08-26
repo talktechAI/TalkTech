@@ -275,12 +275,9 @@ export default function Page() {
 
                 <AnimatePresence>
                   {phase === "physics" && (
-                    <MotionDiv
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="absolute inset-0"
-                    >
+                    <motion.div
+                      {...{ initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, className: "absolute inset-0" } as any}
+                    >  
                       {LETTERS.map((ch, i) => (
                         <MotionDiv
                           key={`phys_${i}`}
