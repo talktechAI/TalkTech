@@ -56,7 +56,7 @@ export async function middleware(req: NextRequest) {
   if (req.method === "POST" && url.pathname.startsWith("/api/")) {
     const origin = req.headers.get("origin") || "";
     const host = req.headers.get("host") || "";
-    const allowed = (env.NEXT_PUBLIC_SITE_ORIGIN as string) || `https://${host}`;
+    const allowed = ((env as any).NEXT_PUBLIC_SITE_ORIGIN as string) || `https://${host}`;
     if (origin && !origin.startsWith(allowed)) {
       return NextResponse.json({ ok: false, error: "Invalid origin" }, { status: 403 });
     }

@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 import { getRequestContext } from "@cloudflare/next-on-pages";
 
@@ -16,18 +15,27 @@ type TurnstileVerify = {
 export async function POST(req: Request) {
   const { env } = getRequestContext();
   try {
+    // --- Parse & normalize body ---
     const data = await req.json().catch(() => ({}));
-    let { name, email, message, turnstileToken } = data || {};
+    let { name, email, message, turnstileToken } = (data || {}) as {
+      name?: string;
+      email?: string;
+      message?: string;
+      turnstileToken?: string;
+    };
+    name = String(name || "").trim();
+    email = String(email || "").trim();
+    message = String(message || "").trim();
 
-    name = String(name || '').trim();
-    email = String(email || '').trim();
-    message = String(message || '').trim();
     if (!name || !email || !message) {
       return NextResponse.json({ ok: false, error: "Missing required fields." }, { status: 400 });
     }
+    if (name.length > 120 || email.length > 200 || message.length > 5000) {
+      return NextResponse.json({ ok: false, error: "Payload too large" }, { status: 413 });
+    }
 
     // --- Turnstile verification ---
-    const secret = env.TURNSTILE_SECRET_KEY as string | undefined;
+    const secret = (env as any).TURNSTILE_SECRET_KEY as string | undefined;
     if (!secret) {
       return NextResponse.json({ ok: false, error: "Server misconfigured: TURNSTILE_SECRET_KEY missing." }, { status: 500 });
     }
@@ -48,21 +56,22 @@ export async function POST(req: Request) {
     });
     const verifyJson = (await verifyRes.json()) as TurnstileVerify;
     if (!verifyJson.success) {
-      return NextResponse.json({ ok: false, error: "CAPTCHA failed", details: verifyJson["error-codes"] || [] }, { status: 400 });
-    }
-
-    if (name.length > 120 || email.length > 200 || message.length > 5000) {
-      return NextResponse.json({ ok: false, error: "Payload too large" }, { status: 413 });
+      return NextResponse.json(
+        { ok: false, error: "CAPTCHA failed", details: verifyJson["error-codes"] || [] },
+        { status: 400 }
+      );
     }
 
     const payload = {
-      name, email, message,
+      name,
+      email,
+      message,
       userAgent: req.headers.get("user-agent") || "",
       created_at: new Date().toISOString(),
     };
 
     // --- Optional: forward to webhook if configured ---
-    const webhook = env.CF_CONTACT_WEBHOOK as string | undefined;
+    const webhook = (env as any).CF_CONTACT_WEBHOOK as string | undefined;
     if (webhook) {
       await fetch(webhook, {
         method: "POST",
@@ -74,19 +83,23 @@ export async function POST(req: Request) {
     // --- Store in D1 if bound ---
     const db = (env as any).TALKTECH_DB;
     if (db) {
-      // Ensure table exists (id INTEGER PRIMARY KEY AUTOINCREMENT is supported by D1/SQLite)
-      await db.prepare(`CREATE TABLE IF NOT EXISTS contact_messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL,
-        message TEXT NOT NULL,
-        ua TEXT,
-        created_at TEXT NOT NULL
-      )`).run();
+      await db
+        .prepare(`CREATE TABLE IF NOT EXISTS contact_messages (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          message TEXT NOT NULL,
+          ua TEXT,
+          created_at TEXT NOT NULL
+        )`)
+        .run();
 
-      await db.prepare(
-        "INSERT INTO contact_messages (name, email, message, ua, created_at) VALUES (?1, ?2, ?3, ?4, ?5)"
-      ).bind(name, email, message, payload.userAgent, payload.created_at).run();
+      await db
+        .prepare(
+          "INSERT INTO contact_messages (name, email, message, ua, created_at) VALUES (?1, ?2, ?3, ?4, ?5)"
+        )
+        .bind(name, email, message, payload.userAgent, payload.created_at)
+        .run();
     }
 
     return NextResponse.json({ ok: true, received: true });
