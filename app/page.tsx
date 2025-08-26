@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence, MotionProps } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Matter from "matter-js";
 import { HeaderBrand } from "@/components/HeaderBrand";
 
@@ -124,9 +124,6 @@ function SvgLetter({
     </svg>
   );
 }
-
-// Create a properly typed motion div component
-const MotionDiv = motion.div;
 
 export default function Page() {
   const prefersReduced = usePrefersReducedMotion();
@@ -251,7 +248,6 @@ export default function Page() {
 
   return (
     <main className="min-h-screen w-full">
-      {/* Header with animated TT */}
       <header className="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-white/60 bg-white/40 border-b border-slate-200 dark:supports-[backdrop-filter]:bg-slate-950/40 dark:bg-slate-950/30 dark:border-slate-800">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
@@ -265,7 +261,6 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-8 items-center pt-16 pb-10 lg:py-24">
@@ -275,11 +270,9 @@ export default function Page() {
 
                 <AnimatePresence>
                   {phase === "physics" && (
-                    <motion.div
-                      {...{ initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, className: "absolute inset-0" } as any}
-                    >  
+                    <div className="absolute inset-0">
                       {LETTERS.map((ch, i) => (
-                        <MotionDiv
+                        <motion.div
                           key={`phys_${i}`}
                           className="absolute"
                           style={{
@@ -288,18 +281,18 @@ export default function Page() {
                           }}
                         >
                           <SvgLetter ch={ch} fontSize={fontSize} textureOffset={textureOffsets[i]} dark={dark} />
-                        </MotionDiv>
+                        </motion.div>
                       ))}
                       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 h-4 w-2/3 rounded-full blur-md"
                            style={{ background: "radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.08) 60%, rgba(0,0,0,0) 100%)" }}/>
-                    </MotionDiv>
+                    </div>
                   )}
                 </AnimatePresence>
 
                 {phase === "assemble" && targets && (
                   <div className="absolute inset-0">
                     {LETTERS.map((ch, i) => (
-                      <MotionDiv
+                      <motion.div
                         key={`asm_${i}`}
                         className="absolute will-change-transform"
                         initial={{ x: bodiesState[i]?.x ?? 0, y: bodiesState[i]?.y ?? 0, rotate: (bodiesState[i]?.angle ?? 0) * (180 / Math.PI), scale: 1.05 }}
@@ -308,7 +301,7 @@ export default function Page() {
                         style={{ transformOrigin: "center" }}
                       >
                         <SvgLetter ch={ch} fontSize={fontSize} textureOffset={textureOffsets[i]} dark={dark} />
-                      </MotionDiv>
+                      </motion.div>
                     ))}
                   </div>
                 )}
