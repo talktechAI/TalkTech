@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import * as Matter from "matter-js";
+import { motion, AnimatePresence, MotionProps } from "framer-motion";
+import Matter from "matter-js";
 import { HeaderBrand } from "@/components/HeaderBrand";
 
 const LOGO_URL = "/talktech-mark-futuristic.svg";
@@ -124,6 +124,9 @@ function SvgLetter({
     </svg>
   );
 }
+
+// Create a properly typed motion div component
+const MotionDiv = motion.div;
 
 export default function Page() {
   const prefersReduced = usePrefersReducedMotion();
@@ -272,14 +275,14 @@ export default function Page() {
 
                 <AnimatePresence>
                   {phase === "physics" && (
-                    <motion.div
-                     className="absolute inset-0" 
-                     initial={{ opacity: 0 }} 
-                     animate={{ opacity: 1 }} 
-                     exit={{ opacity: 0 }}
-                   >
+                    <MotionDiv
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0"
+                    >
                       {LETTERS.map((ch, i) => (
-                        <motion.div
+                        <MotionDiv
                           key={`phys_${i}`}
                           className="absolute"
                           style={{
@@ -288,18 +291,18 @@ export default function Page() {
                           }}
                         >
                           <SvgLetter ch={ch} fontSize={fontSize} textureOffset={textureOffsets[i]} dark={dark} />
-                        </motion.div>
+                        </MotionDiv>
                       ))}
                       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 h-4 w-2/3 rounded-full blur-md"
                            style={{ background: "radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.08) 60%, rgba(0,0,0,0) 100%)" }}/>
-                    </motion.div>
+                    </MotionDiv>
                   )}
                 </AnimatePresence>
 
                 {phase === "assemble" && targets && (
                   <div className="absolute inset-0">
                     {LETTERS.map((ch, i) => (
-                      <motion.div
+                      <MotionDiv
                         key={`asm_${i}`}
                         className="absolute will-change-transform"
                         initial={{ x: bodiesState[i]?.x ?? 0, y: bodiesState[i]?.y ?? 0, rotate: (bodiesState[i]?.angle ?? 0) * (180 / Math.PI), scale: 1.05 }}
@@ -308,7 +311,7 @@ export default function Page() {
                         style={{ transformOrigin: "center" }}
                       >
                         <SvgLetter ch={ch} fontSize={fontSize} textureOffset={textureOffsets[i]} dark={dark} />
-                      </motion.div>
+                      </MotionDiv>
                     ))}
                   </div>
                 )}
