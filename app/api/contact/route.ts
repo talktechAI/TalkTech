@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     }
 
     // --- Turnstile verification ---
-    const secret = (env as any).TURNSTILE_SECRET_KEY as string | undefined;
+    const secret = env.TURNSTILE_SECRET_KEY as string | undefined;
     if (!secret) {
       return NextResponse.json({ ok: false, error: "Server misconfigured: TURNSTILE_SECRET_KEY missing." }, { status: 500 });
     }
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     };
 
     // --- Optional: forward to webhook if configured ---
-    const webhook = (env as any).CF_CONTACT_WEBHOOK as string | undefined;
+    const webhook = env.CF_CONTACT_WEBHOOK as string | undefined;
     if (webhook) {
       await fetch(webhook, {
         method: "POST",
@@ -81,7 +81,7 @@ export async function POST(req: Request) {
     }
 
     // --- Store in D1 if bound ---
-    const db = (env as any).TALKTECH_DB;
+    const db = env.TALKTECH_DB;
     if (db) {
       await db
         .prepare(`CREATE TABLE IF NOT EXISTS contact_messages (

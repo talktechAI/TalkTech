@@ -1,4 +1,3 @@
-
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getRequestContext } from "@cloudflare/next-on-pages";
@@ -56,20 +55,19 @@ export async function middleware(req: NextRequest) {
   if (req.method === "POST" && url.pathname.startsWith("/api/")) {
     const origin = req.headers.get("origin") || "";
     const host = req.headers.get("host") || "";
-    const allowed = ((env as any).NEXT_PUBLIC_SITE_ORIGIN as string) || `https://${host}`;
+    const allowed = env.NEXT_PUBLIC_SITE_ORIGIN || `https://${host}`;
     if (origin && !origin.startsWith(allowed)) {
       return NextResponse.json({ ok: false, error: "Invalid origin" }, { status: 403 });
     }
   }
 
-
-// Require Cloudflare Access on /admin/* (expect CF-Access headers)
-if (url.pathname.startsWith("/admin")) {
-  const jwt = req.headers.get("cf-access-jwt-assertion");
-  if (!jwt) {
-    return NextResponse.json({ ok: false, error: "Access required" }, { status: 401 });
+  // Require Cloudflare Access on /admin/* (expect CF-Access headers)
+  if (url.pathname.startsWith("/admin")) {
+    const jwt = req.headers.get("cf-access-jwt-assertion");
+    if (!jwt) {
+      return NextResponse.json({ ok: false, error: "Access required" }, { status: 401 });
+    }
   }
-}
 
   // Rate limit /api/contact (per IP, sliding window). Prefer KV, fallback to D1.
   if (req.method === "POST" && url.pathname === "/api/contact") {
@@ -79,7 +77,7 @@ if (url.pathname.startsWith("/admin")) {
     const key = `rl:contact:${ip}`;
 
     // KV if bound
-    const kv = (env as any).TALKTECH_KV;
+    const kv = env.TALKTECH_KV;
     if (kv && typeof kv.get === "function") {
       const val = await kv.get(key);
       const count = val ? parseInt(val, 10) : 0;
@@ -90,7 +88,7 @@ if (url.pathname.startsWith("/admin")) {
       await kv.put(key, String(count + 1), { expirationTtl: windowSecs });
     } else {
       // D1 fallback
-      const db = (env as any).TALKTECH_DB;
+      const db = env.TALKTECH_DB;
       if (db) {
         await db.prepare(`CREATE TABLE IF NOT EXISTS rate_limits (
           key TEXT PRIMARY KEY,

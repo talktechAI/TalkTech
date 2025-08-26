@@ -2,7 +2,7 @@
 
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Matter from "matter-js";
+import * as Matter from "matter-js";
 import { HeaderBrand } from "@/components/HeaderBrand";
 
 const LOGO_URL = "/talktech-mark-futuristic.svg";
