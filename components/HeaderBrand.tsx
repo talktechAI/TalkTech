@@ -98,6 +98,7 @@ export function HeaderBrand() {
         initial={{ opacity: 0, x: 8 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.6, duration: 0.4 }}
+        style={{}} // Add this empty style prop
       >
         TalkTech
       </motion.span>
