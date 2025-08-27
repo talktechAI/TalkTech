@@ -13,6 +13,7 @@ declare global {
     
     // Site origin for CSRF protection
     NEXT_PUBLIC_SITE_ORIGIN?: string;
+    SITE_ORIGIN?: string;
     
     // Database and KV bindings
     TALKTECH_DB?: D1Database; // D1 database binding
