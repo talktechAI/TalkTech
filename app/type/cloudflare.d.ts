@@ -15,8 +15,8 @@ declare global {
     NEXT_PUBLIC_SITE_ORIGIN?: string;
     
     // Database and KV bindings
-    TALKTECH_DB?: any; // D1 database binding
-    TALKTECH_KV?: any; // KV namespace binding
+    TALKTECH_DB?: D1Database; // D1 database binding
+    TALKTECH_KV?: KVNamespace; // KV namespace binding
   }
 }
 

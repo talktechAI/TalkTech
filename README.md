@@ -1,11 +1,17 @@
 # TalkTech — Next.js on Cloudflare Pages (Next-on-Pages)
 
+## Development
+
 1. `npm install`
-2. `npm run build && npm run cf:build`
-3. Deploy on Cloudflare Pages with:
-   - Build command: `npm run cf:build`
-   - Output dir: `.vercel/output/static`
-   - Functions dir: auto-detected
+2. Copy `.env.example` to `.env.local` and fill in your values
+3. `npm run dev` for local development
+
+## Deployment on Cloudflare Pages
+
+Deploy via Cloudflare Dashboard:
+- Build command: `npx @cloudflare/next-on-pages@latest`
+- Build output directory: `.vercel/output/static`
+- Node.js compatibility: Enable in Settings → Functions → Compatibility flags → `nodejs_compat`
 
 ## Security & Data
 

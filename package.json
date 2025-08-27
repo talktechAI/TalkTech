@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "cf:build": "npx @cloudflare/next-on-pages@latest",
-    "cf:preview": "npx @cloudflare/next-on-pages@latest --watch"
+    "preview": "npm run build && npx @cloudflare/next-on-pages@latest && npx wrangler pages dev .vercel/output/static --compatibility-flag nodejs_compat"
   },
   "dependencies": {
     "framer-motion": "^10.18.0",

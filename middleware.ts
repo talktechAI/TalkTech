@@ -55,9 +55,15 @@ export async function middleware(req: NextRequest) {
   if (req.method === "POST" && url.pathname.startsWith("/api/")) {
     const origin = req.headers.get("origin") || "";
     const host = req.headers.get("host") || "";
-    const allowed = env.NEXT_PUBLIC_SITE_ORIGIN || `https://${host}`;
+    const allowed = env.SITE_ORIGIN || `https://${host}`;
     if (origin && !origin.startsWith(allowed)) {
-      return NextResponse.json({ ok: false, error: "Invalid origin" }, { status: 403 });
+      return new Response(JSON.stringify({ ok: false, error: "Invalid origin" }), {
+        status: 403,
+        headers: {
+          'Content-Type': 'application/json',
+          ...Object.fromEntries(res.headers.entries())
+        }
+      });
     }
   }
 
@@ -65,7 +71,13 @@ export async function middleware(req: NextRequest) {
   if (url.pathname.startsWith("/admin")) {
     const jwt = req.headers.get("cf-access-jwt-assertion");
     if (!jwt) {
-      return NextResponse.json({ ok: false, error: "Access required" }, { status: 401 });
+      return new Response(JSON.stringify({ ok: false, error: "Access required" }), {
+        status: 401,
+        headers: {
+          'Content-Type': 'application/json',
+          ...Object.fromEntries(res.headers.entries())
+        }
+      });
     }
   }
 
@@ -86,7 +98,7 @@ export async function middleware(req: NextRequest) {
       }
       // Non-atomic; acceptable for simple throttling
       await kv.put(key, String(count + 1), { expirationTtl: windowSecs });
-    } else {
+     } else {
       // D1 fallback
       const db = env.TALKTECH_DB;
       if (db) {
@@ -95,20 +107,36 @@ export async function middleware(req: NextRequest) {
           count INTEGER NOT NULL,
           expires INTEGER NOT NULL
         )`).run();
+        
         const now = Math.floor(Date.now() / 1000);
-        const expires = now + windowSecs;
-        const row = await db.prepare("SELECT key, count, expires FROM rate_limits WHERE key=?1").bind(key).get();
-        if (!row) {
-          await db.prepare("INSERT INTO rate_limits (key, count, expires) VALUES (?1, ?2, ?3)").bind(key, 1, expires).run();
-        } else {
-          if (row.expires < now) {
-            await db.prepare("UPDATE rate_limits SET count=?2, expires=?3 WHERE key=?1").bind(key, 1, expires).run();
-          } else {
-            if (row.count >= maxReqs) {
-              return NextResponse.json({ ok: false, error: "Rate limit exceeded" }, { status: 429 });
-            }
-            await db.prepare("UPDATE rate_limits SET count=count+1 WHERE key=?1").bind(key).run();
-          }
+        
+        // Clean up expired entries periodically (1% chance)
+        if (Math.random() < 0.01) {
+          await db.prepare("DELETE FROM rate_limits WHERE expires < ?1")
+            .bind(now)
+            .run();
+        }
+        
+        const result = await db.prepare(`
+          INSERT INTO rate_limits (key, count, expires) 
+          VALUES (?1, 1, ?2)
+          ON CONFLICT(key) DO UPDATE SET 
+            count = CASE 
+              WHEN expires < ?3 THEN 1 
+              ELSE count + 1 
+            END,
+            expires = CASE 
+              WHEN expires < ?3 THEN ?2 
+              ELSE expires 
+            END
+          RETURNING count
+        `).bind(key, now + windowSecs, now).first() as { count: number } | null;
+        
+        if (result && result.count > maxReqs) {
+          return new Response(JSON.stringify({ ok: false, error: "Rate limit exceeded" }), {
+            status: 429,
+            headers: { 'Content-Type': 'application/json' }
+          });
         }
       }
       // If no KV/D1, skip (still protected by Turnstile)
