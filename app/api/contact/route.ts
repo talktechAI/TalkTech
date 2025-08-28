@@ -1,109 +1,110 @@
-import { NextResponse } from "next/server";
-import { getRequestContext } from "@cloudflare/next-on-pages";
+import { NextRequest, NextResponse } from 'next/server';
+import { getRequestContext } from '@cloudflare/next-on-pages';
 
-export const runtime = "edge";
+// Rate limiting and validation is already handled in middleware.ts
 
-type TurnstileVerify = {
-  success: boolean;
-  "error-codes"?: string[];
-  challenge_ts?: string;
-  hostname?: string;
-  action?: string;
-  cdata?: string;
-};
+interface ContactRequest {
+  name: string;
+  email: string;
+  message: string;
+  turnstileToken?: string;
+}
 
-export async function POST(req: Request) {
-  const { env } = getRequestContext();
+export async function POST(request: NextRequest) {
   try {
-    // --- Parse & normalize body ---
-    const data = await req.json().catch(() => ({}));
-    let { name, email, message, turnstileToken } = (data || {}) as {
-      name?: string;
-      email?: string;
-      message?: string;
-      turnstileToken?: string;
-    };
-    name = String(name || "").trim();
-    email = String(email || "").trim();
-    message = String(message || "").trim();
-
-    if (!name || !email || !message) {
-      return NextResponse.json({ ok: false, error: "Missing required fields." }, { status: 400 });
+    const { env } = getRequestContext();
+    const body: ContactRequest = await request.json();
+    
+    // Validate Cloudflare Turnstile token if configured
+    if (env.TURNSTILE_SECRET && body.turnstileToken) {
+      const turnstileResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          secret: env.TURNSTILE_SECRET,
+          response: body.turnstileToken,
+          remoteip: request.headers.get('cf-connecting-ip') || '',
+        }),
+      });
+      
+      const turnstileResult = await turnstileResponse.json();
+      if (!turnstileResult.success) {
+        return NextResponse.json(
+          { ok: false, error: 'Captcha verification failed' },
+          { status: 400 }
+        );
+      }
     }
-    if (name.length > 120 || email.length > 200 || message.length > 5000) {
-      return NextResponse.json({ ok: false, error: "Payload too large" }, { status: 413 });
-    }
-
-    // --- Turnstile verification ---
-    const secret = env.TURNSTILE_SECRET_KEY as string | undefined;
-    if (!secret) {
-      return NextResponse.json({ ok: false, error: "Server misconfigured: TURNSTILE_SECRET_KEY missing." }, { status: 500 });
-    }
-    if (!turnstileToken) {
-      return NextResponse.json({ ok: false, error: "CAPTCHA token missing." }, { status: 400 });
-    }
-
-    const ip = req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "";
-    const form = new URLSearchParams();
-    form.set("secret", secret);
-    form.set("response", turnstileToken);
-    if (ip) form.set("remoteip", ip);
-
-    const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: form,
-      headers: { "content-type": "application/x-www-form-urlencoded" },
-    });
-    const verifyJson = (await verifyRes.json()) as TurnstileVerify;
-    if (!verifyJson.success) {
-      return NextResponse.json(
-        { ok: false, error: "CAPTCHA failed", details: verifyJson["error-codes"] || [] },
-        { status: 400 }
-      );
-    }
-
-    const payload = {
-      name,
-      email,
-      message,
-      userAgent: req.headers.get("user-agent") || "",
-      created_at: new Date().toISOString(),
-    };
-
-    // --- Optional: forward to webhook if configured ---
-    const webhook = env.CF_CONTACT_WEBHOOK as string | undefined;
-    if (webhook) {
-      await fetch(webhook, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
-      }).catch(() => {});
-    }
-
-    // --- Store in D1 if bound ---
-    const db = env.TALKTECH_DB;
-    if (db) {
-      await db
-        .prepare(`CREATE TABLE IF NOT EXISTS contact_messages (
+    
+    // Store in D1 database if configured
+    if (env.TALKTECH_DB) {
+      await env.TALKTECH_DB.prepare(`
+        CREATE TABLE IF NOT EXISTS contacts (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           email TEXT NOT NULL,
           message TEXT NOT NULL,
-          ua TEXT,
-          created_at TEXT NOT NULL
-        )`)
-        .run();
-
-      await db
-        .prepare(
-          "INSERT INTO contact_messages (name, email, message, ua, created_at) VALUES (?1, ?2, ?3, ?4, ?5)"
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          ip TEXT
         )
-        .bind(name, email, message, payload.userAgent, payload.created_at)
-        .run();
+      `).run();
+      
+      await env.TALKTECH_DB.prepare(`
+        INSERT INTO contacts (name, email, message, ip)
+        VALUES (?, ?, ?, ?)
+      `).bind(
+        body.name,
+        body.email,
+        body.message,
+        request.headers.get('cf-connecting-ip') || 'unknown'
+      ).run();
     }
-
-    return NextResponse.json({ ok: true, received: true });
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err?.message || "Unknown error" }, { status: 500 });
+    
+    // Send email notification if configured
+    if (env.RESEND_API_KEY && env.NOTIFICATION_EMAIL) {
+      const emailResponse = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'noreply@yourdomain.com',
+          to: env.NOTIFICATION_EMAIL,
+          subject: `New Contact Form Submission from ${body.name}`,
+          html: `
+            <h2>New Contact Form Submission</h2>
+            <p><strong>Name:</strong> ${body.name}</p>
+            <p><strong>Email:</strong> ${body.email}</p>
+            <p><strong>Message:</strong></p>
+            <p>${body.message.replace(/\n/g, '<br>')}</p>
+            <p><strong>IP:</strong> ${request.headers.get('cf-connecting-ip') || 'unknown'}</p>
+          `,
+        }),
+      });
+      
+      if (!emailResponse.ok) {
+        console.error('Failed to send notification email');
+      }
+    }
+    
+    return NextResponse.json({ 
+      ok: true, 
+      message: 'Thank you for your message! I\'ll get back to you soon.' 
+    });
+    
+  } catch (error) {
+    console.error('Contact form error:', error);
+    return NextResponse.json(
+      { ok: false, error: 'Internal server error' },
+      { status: 500 }
+    );
   }
+}
+
+// Handle OPTIONS for CORS
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 200 });
 }
