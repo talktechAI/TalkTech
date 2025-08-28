@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const body: ContactRequest = await request.json();
     
     // Validate Cloudflare Turnstile token if configured
-    if (env.TURNSTILE_SECRET && body.turnstileToken) {
+    if (env.TURNSTILE_SECRET_KEY && body.turnstileToken) {
       const turnstileResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
         method: 'POST',
         headers: {
