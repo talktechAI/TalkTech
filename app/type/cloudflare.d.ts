@@ -1,8 +1,8 @@
 // types/cloudflare.d.ts
 declare global {
   interface CloudflareEnv {
-    // Turnstile configuration
-    TURNSTILE_SECRET_KEY?: string;
+    // Turnstile configuration (match your existing code)
+    TURNSTILE_SECRET_KEY?: string;        // ✅ Matches your existing code
     
     // Optional webhook for contact form submissions
     CF_CONTACT_WEBHOOK?: string;
