@@ -5,7 +5,7 @@ pages_build_output_dir = ".vercel/output/static"
 
 # Production environment
 [env.production.vars]
-SITE_ORIGIN = talktech.io
+SITE_ORIGIN = "http://talktech.io"
 RATE_LIMIT_WINDOW_SECS = "60"
 RATE_LIMIT_MAX = "5"
 
@@ -22,7 +22,7 @@ id = ""  # Fill this after: wrangler kv:namespace create "TALKTECH_KV"
 
 # Preview environment (for staging/pull requests)
 [env.preview.vars]
-SITE_ORIGIN = "https://your-domain.pages.dev"
+SITE_ORIGIN = "https://talktech.pages.dev"
 RATE_LIMIT_WINDOW_SECS = "60"  
 RATE_LIMIT_MAX = "10"  # More lenient for testing
 
