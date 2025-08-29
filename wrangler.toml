@@ -5,7 +5,7 @@ pages_build_output_dir = ".vercel/output/static"
 
 # Production environment
 [env.production.vars]
-SITE_ORIGIN = "https://your-domain.com"  # Replace with your actual domain
+SITE_ORIGIN = talktech.io
 RATE_LIMIT_WINDOW_SECS = "60"
 RATE_LIMIT_MAX = "5"
 
