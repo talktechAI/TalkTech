@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          secret: env.TURNSTILE_SECRET,
+          secret: env.TURNSTILE_SECRET_KEY,
           response: body.turnstileToken,
           remoteip: request.headers.get('cf-connecting-ip') || '',
         }),
