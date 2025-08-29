@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'noreply@yourdomain.com',
+          from: 'noreply@talktech.io',
           to: env.NOTIFICATION_EMAIL,
           subject: `New Contact Form Submission from ${body.name}`,
           html: `
