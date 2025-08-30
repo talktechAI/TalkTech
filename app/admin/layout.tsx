@@ -1,10 +1,18 @@
+'use client'
+// app/admin/layout.tsx
 import { Metadata } from 'next';
+import AdminThemeToggle from './AdminThemeToggle';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard | TalkTech',
   description: 'Admin dashboard for managing contacts and site analytics',
-  robots: 'noindex, nofollow', // Prevent indexing of admin pages
+  robots: 'noindex, nofollow',
 };
+
+// Optional segment-level config (you can omit if your pages already set these)
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default function AdminLayout({
   children,
@@ -24,7 +32,7 @@ export default function AdminLayout({
                 </h1>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               {/* Health Check Button */}
               <a
@@ -35,7 +43,7 @@ export default function AdminLayout({
               >
                 Health Check
               </a>
-              
+
               {/* Back to Site */}
               <a
                 href="/"
@@ -43,35 +51,16 @@ export default function AdminLayout({
               >
                 ← Back to Site
               </a>
-              
-              {/* Theme Toggle (Optional) */}
-              <button
-                onClick={() => {
-                  const html = document.documentElement;
-                  if (html.classList.contains('dark')) {
-                    html.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
-                  } else {
-                    html.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
-                  }
-                }}
-                className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-md"
-                title="Toggle theme"
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
-              </button>
+
+              {/* Theme Toggle now lives in a Client Component */}
+              <AdminThemeToggle />
             </div>
           </div>
         </div>
       </nav>
 
       {/* Admin Content */}
-      <main>
-        {children}
-      </main>
+      <main>{children}</main>
 
       {/* Admin Footer */}
       <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
@@ -82,9 +71,9 @@ export default function AdminLayout({
             </div>
             <div className="space-x-4">
               <span>Protected by Cloudflare Access</span>
-              <a 
-                href="https://developers.cloudflare.com/pages/functions/" 
-                target="_blank" 
+              <a
+                href="https://developers.cloudflare.com/pages/functions/"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-gray-700 dark:hover:text-gray-200"
               >
@@ -94,20 +83,6 @@ export default function AdminLayout({
           </div>
         </div>
       </footer>
-
-      {/* Theme Script - Initialize theme on page load */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              const theme = localStorage.getItem('theme');
-              if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-              }
-            })();
-          `,
-        }}
-      />
     </div>
   );
 }

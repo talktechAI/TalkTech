@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 
 // This route is protected by middleware.ts (requires CF Access headers)
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const { env } = getRequestContext();
+    const { env } = getRequestContext() as { env: CloudflareEnv };
     
     if (!env.TALKTECH_DB) {
       return NextResponse.json(

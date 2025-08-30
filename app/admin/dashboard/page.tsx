@@ -1,7 +1,11 @@
+'use client';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { headers } from "next/headers";
 import { Suspense } from 'react';
 
-export const runtime = "edge";
+export const runtime = 'edge';
 
 // Keep your existing getRows function but enhance it
 async function getRows(limit = 50) {
