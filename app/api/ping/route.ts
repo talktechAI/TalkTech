@@ -1,8 +1,7 @@
 // app/api/ping/route.ts
-export const runtime = 'edge';
-export const prerender = false;
-
 import { NextResponse } from 'next/server';
+
+export const runtime = 'edge'; // ✅ allowed on Route Handlers
 
 export async function GET() {
   return NextResponse.json(
