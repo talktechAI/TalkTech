@@ -1,4 +1,6 @@
 // types/cloudflare.d.ts
+type D1Database = any;
+type KVNamespace = any;
 declare global {
   interface CloudflareEnv {
     // Turnstile configuration (match your existing code)
@@ -18,6 +20,11 @@ declare global {
     // Database and KV bindings
     TALKTECH_DB?: D1Database; // D1 database binding
     TALKTECH_KV?: KVNamespace; // KV namespace binding
+
+    // Resend and Notification
+    RESEND_API_KEY?: string;
+    NOTIFICATION_EMAIL?: string;
+
   }
 }
 
