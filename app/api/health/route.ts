@@ -36,7 +36,7 @@ export async function GET() {
       services: {
         database: dbStatus,
         kv: kvStatus,
-        turnstile: env.TURNSTILE_SECRET ? 'configured' : 'not configured',
+        turnstile: env.TURNSTILE_SECRET_KEY ? 'configured' : 'not configured',
         email: env.RESEND_API_KEY ? 'configured' : 'not configured',
       }
     });
