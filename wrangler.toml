@@ -13,12 +13,12 @@ RATE_LIMIT_MAX = "5"
 [[env.production.d1_databases]]
 binding = "TALKTECH_DB"
 database_name = "talktech-db"
-database_id = ""  # Fill this after: wrangler d1 create talktech-db
+database_id = "26a7a5e6-1e5e-4c00-a3d3-7901b718a31f"  # Fill this after: wrangler d1 create talktech-db
 
 # KV binding (optional - update id after creating)
 [[env.production.kv_namespaces]]
 binding = "TALKTECH_KV"
-id = ""  # Fill this after: wrangler kv:namespace create "TALKTECH_KV"
+id = "b023ff2f14ae401aa81d1bb963f96a58"  # Fill this after: wrangler kv:namespace create "TALKTECH_KV"
 
 # Preview environment (for staging/pull requests)
 [env.preview.vars]
@@ -30,7 +30,7 @@ RATE_LIMIT_MAX = "10"  # More lenient for testing
 [[env.preview.d1_databases]]
 binding = "TALKTECH_DB"
 database_name = "talktech-db"
-database_id = ""  # Same as production or separate test DB
+database_id = "26a7a5e6-1e5e-4c00-a3d3-7901b718a31f"  # Same as production or separate test DB
 
 # 🔐 SECRETS - Set these via CLI (never in this file):
 # wrangler secret put TURNSTILE_SECRET_KEY --env production
