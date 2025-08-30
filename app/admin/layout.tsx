@@ -1,4 +1,3 @@
-'use client'
 // app/admin/layout.tsx
 import { Metadata } from 'next';
 import AdminThemeToggle from './AdminThemeToggle';
@@ -9,7 +8,6 @@ export const metadata: Metadata = {
   robots: 'noindex, nofollow',
 };
 
-// Optional segment-level config (you can omit if your pages already set these)
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -34,7 +32,6 @@ export default function AdminLayout({
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Health Check Button */}
               <a
                 href="/api/health"
                 target="_blank"
@@ -43,8 +40,6 @@ export default function AdminLayout({
               >
                 Health Check
               </a>
-
-              {/* Back to Site */}
               <a
                 href="/"
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium"
@@ -52,17 +47,15 @@ export default function AdminLayout({
                 ← Back to Site
               </a>
 
-              {/* Theme Toggle now lives in a Client Component */}
+              {/* Client-only toggle lives here */}
               <AdminThemeToggle />
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Admin Content */}
       <main>{children}</main>
 
-      {/* Admin Footer */}
       <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
