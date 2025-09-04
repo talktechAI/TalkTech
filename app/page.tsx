@@ -254,7 +254,7 @@ export default function Page() {
             <nav className="hidden md:flex items-center gap-6 text-sm text-slate-600 dark:text-slate-300">
               <a href="#solutions" className="hover:text-slate-900 dark:hover:text-white transition">Solutions</a>
               <a href="#integrations" className="hover:text-slate-900 dark:hover:text-white transition">Integrations</a>
-              <a href="#contact" className="hover:text-slate-900 dark:hover:text-white transition">Contact</a>
+              <Link href="/contact" className="hover:text-slate-900 dark:hover:text-white transition">Contact</Link>
             </nav>
           </div>
         </div>
@@ -319,7 +319,7 @@ export default function Page() {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
-                <a href="#contact" className="px-5 py-3 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-medium shadow hover:shadow-md transition">Start a project</a>
+                <Link href="/contact" className="px-5 py-3 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-medium shadow hover:shadow-md transition">Start a project</Link>
                 <a href="#solutions" className="px-5 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-900/30 transition">Explore solutions</a>
               </div>
 
@@ -364,7 +364,9 @@ export default function Page() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Contact</h2>
           <p className="mt-3 text-slate-600 dark:text-slate-300 max-w-prose">Tell us what you're building. We'll make it real.</p>
-          <a href="mailto:hello@talktech.example" className="inline-block mt-6 px-5 py-3 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-medium shadow hover:shadow-md transition">Email us</a>
+          <a href="/contact" className="inline-block mt-6 px-5 py-3 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-medium shadow hover:shadow-md transition">
+  Contact Us
+</a>
         </div>
       </section>
 
