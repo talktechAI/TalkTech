@@ -360,13 +360,18 @@ export default function Page() {
         </div>
       </section>
 
-      <section id="contact" className="py-20 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Contact</h2>
-          <p className="mt-3 text-slate-600 dark:text-slate-300 max-w-prose">Tell us what you're building. We'll make it real.</p>
-          <a href="/contact" className="inline-block mt-6 px-5 py-3 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-medium shadow hover:shadow-md transition">
-  Contact Us
-</a>
+      <section id="contact" className="py-20 px-6 text-center">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold mb-4">Let's Connect</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-300 mb-6">
+            Have a project in mind? We'll make it real.
+          </p>
+          <Link 
+            href="/contact" 
+            className="inline-block mt-6 px-5 py-3 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-medium shadow hover:shadow-md transition"
+          >
+            Get In Touch
+          </Link>
         </div>
       </section>
 
