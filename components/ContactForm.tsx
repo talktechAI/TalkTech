@@ -46,7 +46,7 @@ export default function ContactForm({ siteKey }: { siteKey: string }) {
     <form onSubmit={submit} className="grid gap-4">
       <input name="name" placeholder="Your name" required className="border p-2 rounded" />
       <input name="email" type="email" placeholder="you@example.com" required className="border p-2 rounded" />
-      <textarea name="message" placeholder="Tell us a bit…" required className="border p-2 rounded min-h-28" />
+      <textarea name="message" placeholder="Tell us about your project" required className="border p-2 rounded min-h-28" />
       <div ref={ref} className="my-2" />
       <button disabled={!token} className="rounded px-4 py-2 border">Send</button>
     </form>
