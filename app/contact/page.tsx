@@ -1,8 +1,6 @@
 // app/contact/page.tsx
 import ContactForm from "@/components/ContactForm";
 
-export const runtime = "edge";
-
 export default function Page() {
   // Read the site key on the server (TS knows 'process' after @types/node)
   const siteKey = process.env.TURNSTILE_SITE_KEY ?? "";
