@@ -2,10 +2,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 
-// Route Handlers: do NOT export `prerender` / `revalidate` / `dynamic`.
-// Only `runtime` is valid here.
-export const runtime = 'edge';
-
 interface ContactRequest {
   name: string;
   email: string;
