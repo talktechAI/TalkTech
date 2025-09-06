@@ -5,9 +5,10 @@ pages_build_output_dir = ".vercel/output/static"
 
 # Production environment
 [env.production.vars]
-SITE_ORIGIN = "http://talktech.io"
+SITE_ORIGIN = "https://talktech.io"
 RATE_LIMIT_WINDOW_SECS = "60"
 RATE_LIMIT_MAX = "5"
+TURNSTILE_SITE_KEY = "0x4AAAAAABunO9-oW-iHJneR"
 
 # Database binding (update database_id after creating)
 [[env.production.d1_databases]]
@@ -25,6 +26,7 @@ id = "b023ff2f14ae401aa81d1bb963f96a58"  # Fill this after: wrangler kv:namespac
 SITE_ORIGIN = "https://talktech.pages.dev"
 RATE_LIMIT_WINDOW_SECS = "60"  
 RATE_LIMIT_MAX = "10"  # More lenient for testing
+TURNSTILE_SITE_KEY = "0x4AAAAAABunO9-oW-iHJneR"
 
 # Preview can use same database for testing
 [[env.preview.d1_databases]]
