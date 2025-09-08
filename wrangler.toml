@@ -25,12 +25,6 @@ TURNSTILE_SITE_KEY = "0x4AAAAAABunO9-oW-iHJneR"
 RATE_LIMIT_WINDOW_SECS = "60"
 RATE_LIMIT_MAX = "5"
 
-# D1 binding (ensure ID matches your real DB)
-[[env.production.d1_databases]]
-binding = "TALKTECH_DB"
-database_name = "talktech-db"
-database_id = "26a7a5e6-1e5e-4c00-a3d3-7901b718a31f"
-
 # KV binding for optional rate limiting / dedupe
 [[env.production.kv_namespaces]]
 binding = "TALKTECH_KV"
@@ -52,11 +46,6 @@ TURNSTILE_SITE_KEY = "0x4AAAAAABunO9-oW-iHJneR"
 # Looser limits for testing
 RATE_LIMIT_WINDOW_SECS = "60"
 RATE_LIMIT_MAX = "10"
-
-[[env.preview.d1_databases]]
-binding = "TALKTECH_DB"
-database_name = "talktech-db"
-database_id = "26a7a5e6-1e5e-4c00-a3d3-7901b718a31f"
 
 # (Optional) KV in preview too
 [[env.preview.kv_namespaces]]
