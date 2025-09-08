@@ -1,13 +1,3 @@
-/// <reference types="@cloudflare/workers-types" />
-
-/**
- * Ambient type augmentation for Cloudflare Pages (next-on-pages) runtime.
- * This lets TypeScript know about your custom environment variables so
- * `getRequestContext().env` is properly typed.
- *
- * Place this file at: types/cloudflare-env.d.ts
- * Your tsconfig.json already includes: "types/**/*.d.ts"
- */
 declare global {
   interface CloudflareEnv {
     /**
