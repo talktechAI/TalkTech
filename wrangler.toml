@@ -16,7 +16,7 @@ ENVIRONMENT = "production"
 CONTACT_WORKER_URL = "https://contactworker.talktech.workers.dev"
 
 # Email address to receive notifications (via Resend)
-NOTIFICATION_EMAIL = "alerts@talktech.io"
+NOTIFICATION_EMAIL = "contact@talktech.io"
 
 # --- Turnstile (site key is public / plain text) ---
 TURNSTILE_SITE_KEY = "0x4AAAAAABunO9-oW-iHJneR"
@@ -45,7 +45,7 @@ ENVIRONMENT = "preview"
 
 # Can point to the same Worker or a staging Worker route
 CONTACT_WORKER_URL = "https://contactworker.talktech.workers.dev"
-NOTIFICATION_EMAIL = "alerts+preview@talktech.io"
+NOTIFICATION_EMAIL = "contact@talktech.io"
 
 TURNSTILE_SITE_KEY = "0x4AAAAAABunO9-oW-iHJneR"
 
