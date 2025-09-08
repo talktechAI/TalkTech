@@ -3,37 +3,62 @@ compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
 
-# Production environment
+# ===============================
+# PRODUCTION
+# ===============================
 [env.production.vars]
+# --- App & routing ---
 SITE_ORIGIN = "https://talktech.io"
-RATE_LIMIT_WINDOW_SECS = "60"
-RATE_LIMIT_MAX = "5"
+ENVIRONMENT = "production"
+
+# --- API route -> Worker integration (PLAIN TEXT) ---
+# URL of your contact Worker (route or workers.dev)
+CONTACT_WORKER_URL = "https://contactworker.talktech.workers.dev"
+
+# Email address to receive notifications (via Resend)
+NOTIFICATION_EMAIL = "alerts@talktech.io"
+
+# --- Turnstile (site key is public / plain text) ---
 TURNSTILE_SITE_KEY = "0x4AAAAAABunO9-oW-iHJneR"
 
-# Database binding (update database_id after creating)
+# --- Optional rate limits (plain text knobs) ---
+RATE_LIMIT_WINDOW_SECS = "60"
+RATE_LIMIT_MAX = "5"
+
+# D1 binding (ensure ID matches your real DB)
 [[env.production.d1_databases]]
 binding = "TALKTECH_DB"
 database_name = "talktech-db"
-database_id = "26a7a5e6-1e5e-4c00-a3d3-7901b718a31f"  # Fill this after: wrangler d1 create talktech-db
+database_id = "26a7a5e6-1e5e-4c00-a3d3-7901b718a31f"
 
-# KV binding (optional - update id after creating)
+# KV binding for optional rate limiting / dedupe
 [[env.production.kv_namespaces]]
 binding = "TALKTECH_KV"
-id = "b023ff2f14ae401aa81d1bb963f96a58"  # Fill this after: wrangler kv:namespace create "TALKTECH_KV"
+id = "b023ff2f14ae401aa81d1bb963f96a58"
 
-# Preview environment (for staging/pull requests)
+# ===============================
+# PREVIEW / STAGING
+# ===============================
 [env.preview.vars]
 SITE_ORIGIN = "https://talktech.pages.dev"
-RATE_LIMIT_WINDOW_SECS = "60"  
-RATE_LIMIT_MAX = "10"  # More lenient for testing
+ENVIRONMENT = "preview"
+
+# Can point to the same Worker or a staging Worker route
+CONTACT_WORKER_URL = "https://contactworker.talktech.workers.dev"
+NOTIFICATION_EMAIL = "alerts+preview@talktech.io"
+
 TURNSTILE_SITE_KEY = "0x4AAAAAABunO9-oW-iHJneR"
 
-# Preview can use same database for testing
+# Looser limits for testing
+RATE_LIMIT_WINDOW_SECS = "60"
+RATE_LIMIT_MAX = "10"
+
 [[env.preview.d1_databases]]
 binding = "TALKTECH_DB"
 database_name = "talktech-db"
-database_id = "26a7a5e6-1e5e-4c00-a3d3-7901b718a31f"  # Same as production or separate test DB
+database_id = "26a7a5e6-1e5e-4c00-a3d3-7901b718a31f"
 
-# 🔐 SECRETS - Set these via CLI (never in this file):
-# wrangler secret put TURNSTILE_SECRET_KEY --env production
-# wrangler secret put CF_CONTACT_WEBHOOK --env production
+# (Optional) KV in preview too
+[[env.preview.kv_namespaces]]
+binding = "TALKTECH_KV"
+id = "b023ff2f14ae401aa81d1bb963f96a58"
