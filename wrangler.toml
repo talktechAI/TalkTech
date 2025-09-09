@@ -15,17 +15,27 @@ ENVIRONMENT = "production"
 # URL of your contact Worker (route or workers.dev)
 CONTACT_WORKER_URL = "https://contactworker.sdspirek.workers.dev"
 
-# Email address to receive notifications (via Resend)
-NOTIFICATION_EMAIL = "contact@talktech.io"
-
 # --- Turnstile (site key is public / plain text) ---
 TURNSTILE_SITE_KEY = "0x4AAAAAABunO9-oW-iHJneR"
 
 # --- Optional rate limits (plain text knobs) ---
 RATE_LIMIT_WINDOW_SECS = "60"
 RATE_LIMIT_MAX = "5"
+NOTIFICATION_EMAIL = "contact@talktech.io"
 
-# KV binding for optional rate limiting / dedupe
+# D1 binding for local/dev parity 
+[[env.production.d1_databases]]
+binding = "TALKTECH_DB"
+database_name = "talktech-db"          
+database_id = "605da4e8-9f81-4560-b9dd-e47d590ba221"  
+
+"d1_databases": [{
+    "binding": "DB",
+    "database_name": "talktech-db",
+    "database_id": "605da4e8-9f81-4560-b9dd-e47d590ba221"
+ }]
+
+# KV binding for optional rate limiting 
 [[env.production.kv_namespaces]]
 binding = "TALKTECH_KV"
 id = "b023ff2f14ae401aa81d1bb963f96a58"
