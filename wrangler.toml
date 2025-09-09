@@ -29,12 +29,6 @@ binding = "TALKTECH_DB"
 database_name = "talktech-db"          
 database_id = "605da4e8-9f81-4560-b9dd-e47d590ba221"  
 
-"d1_databases": [{
-    "binding": "DB",
-    "database_name": "talktech-db",
-    "database_id": "605da4e8-9f81-4560-b9dd-e47d590ba221"
- }]
-
 # KV binding for optional rate limiting 
 [[env.production.kv_namespaces]]
 binding = "TALKTECH_KV"
