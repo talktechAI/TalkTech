@@ -13,7 +13,7 @@ ENVIRONMENT = "production"
 
 # --- API route -> Worker integration (PLAIN TEXT) ---
 # URL of your contact Worker (route or workers.dev)
-CONTACT_WORKER_URL = "https://contactworker.talktech.workers.dev"
+CONTACT_WORKER_URL = "https://contactworker.sdspirek.workers.dev"
 
 # Email address to receive notifications (via Resend)
 NOTIFICATION_EMAIL = "contact@talktech.io"
@@ -38,7 +38,7 @@ SITE_ORIGIN = "https://talktech.pages.dev"
 ENVIRONMENT = "preview"
 
 # Can point to the same Worker or a staging Worker route
-CONTACT_WORKER_URL = "https://contactworker.talktech.workers.dev"
+CONTACT_WORKER_URL = "https://contactworker.sdspirek.workers.dev"
 NOTIFICATION_EMAIL = "contact@talktech.io"
 
 TURNSTILE_SITE_KEY = "0x4AAAAAABunO9-oW-iHJneR"
