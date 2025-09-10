@@ -31,7 +31,17 @@ export async function GET() {
 
   const turnstileConfigured = !!(env.TURNSTILE_SECRET_KEY || env.TURNSTILE_SECRET);
   const emailConfigured = !!env.RESEND_API_KEY;
+  const workerConfigured = !!env.CONTACT_WORKER_URL;
 
+  services: {
+    database: dbStatus,
+    kv: kvStatus,
+    turnstile: turnstileConfigured ? 'configured' : 'not configured',
+    email: emailConfigured ? 'configured' : 'not configured',
+    worker: workerConfigured ? 'configured' : 'not configured',
+  },
+
+  
   // Never return actual secrets
   return NextResponse.json(
     {
