@@ -7,7 +7,7 @@ export const runtime = 'edge'
 export async function GET() {
   const { env } = getRequestContext() as { env: any }
 
-  // DB check (optional but safe)
+  // DB check (safe even if not bound)
   let dbStatus: 'connected' | 'error' | 'not configured' = 'not configured'
   if (env.TALKTECH_DB) {
     try {
@@ -18,7 +18,7 @@ export async function GET() {
     }
   }
 
-  // KV check (optional but safe)
+  // KV check (safe even if not bound)
   let kvStatus: 'connected' | 'error' | 'not configured' = 'not configured'
   if (env.TALKTECH_KV) {
     try {
