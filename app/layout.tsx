@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description: "Futuristic TalkTech hero on Cloudflare Pages",
   openGraph: {
     title: "TalkTech",
-    description: "Hardware to software, VoIP to AI—TalkTech connects your business.",
-    url: "https://talktech.example",
+    description: "Hardware to software, Building Integrations and Content Quick and Easy with AI—TalkTech connects your business.",
+    url: process.env.SITE_ORIGIN || 'https://talktech.io',
     siteName: "TalkTech",
     images: [
       { url: "/og-image.png", width: 1200, height: 630, alt: "TalkTech" },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "TalkTech",
-    description: "Hardware to software, VoIP to AI—TalkTech connects your business.",
+    description: "Hardware to software, Building Integrations and Content Quick and Easy with AI—TalkTech connects your business.",
     images: ["/og-image.png"],
   },
 };
@@ -29,13 +29,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <meta name="theme-color" content="#0b122f" />
       </head>
       <body>
-  <link rel="icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" href="/icon-192.png" />
-  <meta name="theme-color" content="#0b122f" />
-  <Script id="cf-beacon" defer src="https://static.cloudflareinsights.com/beacon.min.js"
-    data-cf-beacon={JSON.stringify({ token: process.env.NEXT_PUBLIC_CF_BEACON_TOKEN || "" })} />{children}</body>
+        <script
+          id="cf-beacon"
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: process.env.NEXT_PUBLIC_CF_BEACON_TOKEN || '' })}
+        />
+        {children}
+      </body>
     </html>
   );
 }
