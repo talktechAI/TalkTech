@@ -1,0 +1,26 @@
+name = "talktech-next-on-pages"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+[env.production.vars]
+SITE_ORIGIN = "https://talktech.io"
+ENVIRONMENT = "production"
+CONTACT_WORKER_URL = "https://<your-worker>.workers.dev"
+NOTIFICATION_EMAIL = "contact@talktech.io"
+TURNSTILE_SITE_KEY = "0x..."
+RATE_LIMIT_WINDOW_SECS = "60"
+RATE_LIMIT_MAX = "5"
+
+[env.preview.vars]
+SITE_ORIGIN = "https://preview.talktech.io"
+ENVIRONMENT = "preview"
+CONTACT_WORKER_URL = "https://<your-worker>.workers.dev"
+NOTIFICATION_EMAIL = "contact@talktech.io"
+TURNSTILE_SITE_KEY = "0x..."
+RATE_LIMIT_WINDOW_SECS = "60"
+RATE_LIMIT_MAX = "10"
+
+# [[env.production.kv_namespaces]]
+# binding = "TALKTECH_KV"
+# id = "<kv-id>"
