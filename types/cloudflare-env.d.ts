@@ -9,6 +9,7 @@ declare global {
     CONTACT_WORKER_URL: string;
     NOTIFICATION_EMAIL?: string;
     SITE_ORIGIN?: string;
+    ALT_SITE_ORIGIN?: string;
     ENVIRONMENT?: string;
     TURNSTILE_SITE_KEY?: string;
     RATE_LIMIT_WINDOW_SECS?: string;
